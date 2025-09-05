@@ -35,5 +35,7 @@ public final class Constants {
     REPLAY
   }
 
+  // Motor CANID Constants
   public static int GripperCANID = 35;
+  public static int ShooterCANID = 31;
 }
