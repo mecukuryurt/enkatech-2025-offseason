@@ -33,6 +33,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.gripper.Gripper;
 import frc.robot.subsystems.gripper.GripperIOSim;
 import frc.robot.subsystems.gripper.GripperIOTalonFX;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -53,6 +56,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final Gripper gripper;
+  private final Shooter shooter;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -68,6 +72,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         gripper = new Gripper(new GripperIOTalonFX(Constants.GripperCANID));
+        shooter = new Shooter(new ShooterIOTalonFX(Constants.ShooterCANID));
         break;
 
       case SIM:
@@ -81,6 +86,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         gripper = new Gripper(new GripperIOSim());
+        shooter = new Shooter(new ShooterIOSim());
         break;
 
       default:
@@ -94,6 +100,7 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         gripper = new Gripper();
+        shooter = new Shooter();
         break;
     }
 
@@ -166,6 +173,10 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(gripper.runAtVoltage(10))
         .onFalse(gripper.runAtVoltage(0));
+    controllerOperator
+        .leftBumper()
+        .onTrue(shooter.runAtVoltage(10))
+        .onFalse(shooter.runAtVoltage(0));
   }
 
   /**
