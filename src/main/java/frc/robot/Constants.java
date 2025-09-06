@@ -36,4 +36,5 @@ public final class Constants {
   }
 
   public static int GripperCANID = 35;
+  public static int ShooterCANID = 31;
 }
