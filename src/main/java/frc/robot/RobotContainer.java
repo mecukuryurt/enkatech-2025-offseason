@@ -23,7 +23,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.goToHangar;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,6 +40,9 @@ import frc.robot.subsystems.gripper.GripperIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIOSim;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -47,6 +54,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Gripper gripper;
+  private final Shooter shooter;
+  private final Wrist wrist;
+  private final Arm arm;
 
   // Controller
   private final CommandXboxController controllerDriver = new CommandXboxController(0);
@@ -54,9 +65,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  private final Gripper gripper;
-  private final Shooter shooter;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -73,6 +81,8 @@ public class RobotContainer {
 
         gripper = new Gripper(new GripperIOTalonFX(Constants.GripperCANID));
         shooter = new Shooter(new ShooterIOTalonFX(Constants.ShooterCANID));
+        wrist = new Wrist(new WristIOTalonFX(Constants.WristCANID));
+        arm = new Arm(new ArmIOTalonFX(Constants.ArmCANID));
         break;
 
       case SIM:
@@ -87,6 +97,8 @@ public class RobotContainer {
 
         gripper = new Gripper(new GripperIOSim());
         shooter = new Shooter(new ShooterIOSim());
+        wrist = new Wrist(new WristIOSim());
+        arm = new Arm(new ArmIOSim());
         break;
 
       default:
@@ -101,6 +113,8 @@ public class RobotContainer {
 
         gripper = new Gripper();
         shooter = new Shooter();
+        wrist = new Wrist();
+        arm = new Arm();
         break;
     }
 
@@ -177,8 +191,8 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(shooter.runAtVoltage(10))
         .onFalse(shooter.runAtVoltage(0));
+    controllerOperator.a().onTrue(new goToHangar(wrist, arm));
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
