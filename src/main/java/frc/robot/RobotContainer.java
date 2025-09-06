@@ -46,7 +46,8 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controllerDriver = new CommandXboxController(0);
+  private final CommandXboxController controllerOperator = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -116,7 +117,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    configureDriverButtonBindings();
+    configureOperatorButtonBindings();
   }
 
   /**
@@ -125,30 +127,30 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
+  private void configureDriverButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -controllerDriver.getLeftY(),
+            () -> -controllerDriver.getLeftX(),
+            () -> -controllerDriver.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    controllerDriver
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -controllerDriver.getLeftY(),
+                () -> -controllerDriver.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controllerDriver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    controllerDriver
         .b()
         .onTrue(
             Commands.runOnce(
@@ -157,8 +159,13 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+  }
 
-    controller.rightBumper().onTrue(gripper.runAtVoltage(10)).onFalse(gripper.runAtVoltage(0));
+  private void configureOperatorButtonBindings() {
+    controllerOperator
+        .rightBumper()
+        .onTrue(gripper.runAtVoltage(10))
+        .onFalse(gripper.runAtVoltage(0));
   }
 
   /**
