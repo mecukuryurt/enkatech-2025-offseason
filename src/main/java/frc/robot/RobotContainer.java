@@ -56,7 +56,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
 
-  // Controller
+  // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
@@ -151,6 +151,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    driveButtonBindings();
+    operatorButtonBindings();
+  }
+
+  private void operatorButtonBindings() {
+    // operator.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    // operator.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+    // operator.y().onTrue(new goToHangar(arm, wrist));
+    // operator.b().onTrue(new shoot(arm, wrist));
+    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+    driver.povUp().onTrue(new goToHangar(arm, wrist));
+    driver.povDown().onTrue(new shoot(arm, wrist));
+  }
+
+  private void driveButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -176,17 +192,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-
-    // operator.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
-    // operator.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
-    // operator.y().onTrue(new goToHangar(arm, wrist));
-    // operator.b().onTrue(new shoot(arm, wrist));
-    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
-    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
-    driver.povUp().onTrue(new goToHangar(arm, wrist));
-    driver.povDown().onTrue(new shoot(arm, wrist));
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
