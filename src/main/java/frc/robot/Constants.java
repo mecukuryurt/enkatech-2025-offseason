@@ -38,4 +38,6 @@ public final class Constants {
   // Motor CANID Constants
   public static int GripperCANID = 35;
   public static int ShooterCANID = 31;
+  public static int ArmCANID = 32;
+  public static int WristCANID = 8;
 }

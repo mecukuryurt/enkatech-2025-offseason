@@ -23,7 +23,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.goToHangar;
+import frc.robot.commands.shoot;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,7 +41,9 @@ import frc.robot.subsystems.gripper.GripperIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIOSim;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -50,14 +57,17 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  // Operational Motors: 
+  // Operational Motors:
   private final Gripper gripper;
   private final Shooter shooter;
+  private final Arm arm;
+  private final Wrist wrist;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -74,6 +84,8 @@ public class RobotContainer {
 
         gripper = new Gripper(new GripperIOTalonFX(Constants.GripperCANID));
         shooter = new Shooter(new ShooterIOTalonFX(Constants.ShooterCANID));
+        arm = new Arm(new ArmIOTalonFX(Constants.ArmCANID));
+        wrist = new Wrist(new WristIOTalonFX(Constants.WristCANID));
         break;
 
       case SIM:
@@ -88,6 +100,8 @@ public class RobotContainer {
 
         gripper = new Gripper(new GripperIOSim());
         shooter = new Shooter(new ShooterIOSim());
+        arm = new Arm(new ArmIOSim());
+        wrist = new Wrist(new WristIOSim());
         break;
 
       default:
@@ -102,6 +116,8 @@ public class RobotContainer {
 
         gripper = new Gripper();
         shooter = new Shooter();
+        arm = new Arm();
+        wrist = new Wrist();
         break;
     }
 
@@ -138,26 +154,20 @@ public class RobotContainer {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driver
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+                drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driver
         .b()
         .onTrue(
             Commands.runOnce(
@@ -167,8 +177,14 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightBumper().onTrue(gripper.runAtVoltage(10)).onFalse(gripper.runAtVoltage(0));
-    controller.leftBumper().onTrue(shooter.runAtVoltage(10)).onFalse(shooter.runAtVoltage(0));
+    // operator.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    // operator.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+    // operator.y().onTrue(new goToHangar(arm, wrist));
+    // operator.b().onTrue(new shoot(arm, wrist));
+    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+    driver.povUp().onTrue(new goToHangar(arm, wrist));
+    driver.povDown().onTrue(new shoot(arm, wrist));
   }
 
   /**
