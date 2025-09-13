@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.wrist.Wrist;
 
-public class shoot extends SequentialCommandGroup {
-  private double wristPos = -32.535;
-  private double armPos = -0.31;
+public class idle extends SequentialCommandGroup {
+  private double wristPos = 0.4;
+  private double armPos = -0.174;
 
-  public shoot(Arm arm, Wrist wrist) {
-
+  public idle(Arm arm, Wrist wrist) {
     addCommands(arm.goToPosition(armPos), wrist.goToPosition(wristPos));
   }
 }

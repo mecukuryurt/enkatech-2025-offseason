@@ -24,7 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.goToHangar;
+import frc.robot.commands.idle;
 import frc.robot.commands.shoot;
+import frc.robot.commands.shoot2;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -68,7 +70,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Arm arm;
   private final Wrist wrist;
-
+  public boolean isWristInLeft = false;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -164,6 +166,10 @@ public class RobotContainer {
     driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
     driver.povUp().onTrue(new goToHangar(arm, wrist));
     driver.povDown().onTrue(new shoot(arm, wrist));
+
+    driver.povLeft().onTrue(new shoot2(arm, wrist));
+    driver.povRight().onTrue(new idle(arm, wrist));
+    driver.y().onTrue(shooter.runAtVoltage(-5)).onFalse(shooter.runAtVoltage(0));
   }
 
   private void driveButtonBindings() {
