@@ -14,6 +14,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.PoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -46,7 +50,12 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.LimelightHelpers;
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -71,6 +80,11 @@ public class RobotContainer {
   private final Arm arm;
   private final Wrist wrist;
   public boolean isWristInLeft = false;
+
+
+  private final PoseEstimator m_poseEstimator = new PoseEstimator<>(null, null, null, null);
+  private final Pigeon2 m_gyro = new Pigeon2(Constants.PigeonCANID);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -167,6 +181,7 @@ public class RobotContainer {
     driver.povUp().onTrue(new goToHangar(arm, wrist));
     driver.povDown().onTrue(new shoot(arm, wrist));
 
+
     driver.povLeft().onTrue(new shoot2(arm, wrist));
     driver.povRight().onTrue(new idle(arm, wrist));
     driver.y().onTrue(shooter.runAtVoltage(-5)).onFalse(shooter.runAtVoltage(0));
@@ -206,5 +221,29 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void limelightPoseEstimatorMegaTag2() {
+    // First, tell Limelight your robot's current orientation
+    LimelightHelpers.setPipelineIndex("limelight", 0);
+    LimelightHelpers.SetRobotOrientation(
+        "limelight", drive.getRotation().getDegrees(), 0, 0, 0, 0, 0);
+    ;
+
+    // Get the pose estimate
+    LimelightHelpers.PoseEstimate limelightMeasurement =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+
+    // Add it to your pose estimator
+
+    if (LimelightHelpers.getFiducialID("limelight") != -1) {
+      drive.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      drive.poseEstimator.addVisionMeasurement(
+          limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
+    }
+
+    Logger.recordOutput("odometry", drive.getPose());
+  }
+
   }
 }
