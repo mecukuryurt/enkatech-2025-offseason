@@ -170,15 +170,12 @@ public class RobotContainer {
     // operator.b().onTrue(new shoot(arm, wrist));
     driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
 
-    driver
-        .leftBumper()
-        .onTrue(shooter.runAtVoltage((sharedValues.shooterStatus == "left") ? 5 : -5))
-        .onFalse(shooter.runAtVoltage(0));
+    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
     driver.povUp().onTrue(new goToHangar(arm, wrist));
-    driver.povDown().onTrue(new shoot(arm, wrist));
+    driver.povLeft().onTrue(new shoot(arm, wrist));
 
-    driver.povLeft().onTrue(new shoot2(arm, wrist));
-    driver.povRight().onTrue(new idle(arm, wrist));
+    driver.povRight().onTrue(new shoot2(arm, wrist));
+    driver.povDown().onTrue(new idle(arm, wrist));
     driver.y().onTrue(shooter.runAtVoltage(-5)).onFalse(shooter.runAtVoltage(0));
   }
 

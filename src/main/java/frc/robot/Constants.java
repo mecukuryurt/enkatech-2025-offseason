@@ -41,4 +41,18 @@ public final class Constants {
   public static int ArmCANID = 32;
   public static int WristCANID = 8;
   public static int PigeonCANID = 1;
+
+  // Motor Positions
+  public static double ArmOffset = 0.194;
+  public static double Shooter2ArmPosition = -0.302 + ArmOffset;
+  public static double Shooter2WristPosition = 8.88;
+
+  public static double Shooter1ArmPosition = -0.322 + ArmOffset;
+  public static double Shooter1WristPosition = -13;
+
+  public static double IdleWristPos = -0.04;
+  public static double IdleArmPos = -0.18 + ArmOffset;
+
+  public static double HangarWristPos = -0.04;
+  public static double HangarArmPos = -0.059 + ArmOffset;
 }
