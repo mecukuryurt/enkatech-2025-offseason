@@ -14,10 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.estimator.PoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -50,12 +47,9 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-
+import frc.robot.util.SharedValues;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.LimelightHelpers;
-import com.ctre.phoenix6.hardware.Pigeon2;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -81,9 +75,7 @@ public class RobotContainer {
   private final Wrist wrist;
   public boolean isWristInLeft = false;
 
-
-  private final PoseEstimator m_poseEstimator = new PoseEstimator<>(null, null, null, null);
-  private final Pigeon2 m_gyro = new Pigeon2(Constants.PigeonCANID);
+  private static SharedValues sharedValues;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -177,10 +169,13 @@ public class RobotContainer {
     // operator.y().onTrue(new goToHangar(arm, wrist));
     // operator.b().onTrue(new shoot(arm, wrist));
     driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
-    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+
+    driver
+        .leftBumper()
+        .onTrue(shooter.runAtVoltage((sharedValues.shooterStatus == "left") ? 5 : -5))
+        .onFalse(shooter.runAtVoltage(0));
     driver.povUp().onTrue(new goToHangar(arm, wrist));
     driver.povDown().onTrue(new shoot(arm, wrist));
-
 
     driver.povLeft().onTrue(new shoot2(arm, wrist));
     driver.povRight().onTrue(new idle(arm, wrist));
@@ -244,6 +239,4 @@ public class RobotContainer {
 
     Logger.recordOutput("odometry", drive.getPose());
   }
-
-  
 }
