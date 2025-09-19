@@ -5,16 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.drive.Drive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class approachToReef extends SequentialCommandGroup {
   /** Creates a new approachToReef. */
-  public approachToReef() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addRequirements();
+  public approachToReef(Drive drive) {
+    var results = LimelightHelpers.getLatestResults("limelight");
+    if (true) {
+      // do some really interesting stuff
+    }
 
     addCommands();
   }
