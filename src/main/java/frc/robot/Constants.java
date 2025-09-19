@@ -16,8 +16,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always
+ * "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
+ * sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -43,16 +45,18 @@ public final class Constants {
   public static int PigeonCANID = 1;
 
   // Motor Positions
-  public static double ArmOffset = 0.194;
-  public static double Shooter2ArmPosition = -0.302 + ArmOffset;
-  public static double Shooter2WristPosition = 8.88;
+  public static double ArmOffset = 0.147;
+  public static double WristOffset = -17;
 
-  public static double Shooter1ArmPosition = -0.322 + ArmOffset;
-  public static double Shooter1WristPosition = -13;
+  public static double Shooter2ArmPosition = -0.322 + ArmOffset;
+  public static double Shooter2WristPosition = 8.88 + WristOffset;
 
-  public static double IdleWristPos = -0.04;
+  public static double Shooter1ArmPosition = -0.302 + ArmOffset;
+  public static double Shooter1WristPosition = -13 + WristOffset;
+
+  public static double IdleWristPos = -0.04 + WristOffset;
   public static double IdleArmPos = -0.18 + ArmOffset;
 
-  public static double HangarWristPos = -0.04;
+  public static double HangarWristPos = -0.04 + WristOffset;
   public static double HangarArmPos = -0.059 + ArmOffset;
 }
