@@ -27,7 +27,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.idle;
 import frc.robot.commands.shoot;
-import frc.robot.commands.shoot2;
+import frc.robot.commands.start;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -47,7 +47,6 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
-import frc.robot.util.SharedValues;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -74,8 +73,6 @@ public class RobotContainer {
   private final Arm arm;
   private final Wrist wrist;
   public boolean isWristInLeft = false;
-
-  private static SharedValues sharedValues;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -165,18 +162,25 @@ public class RobotContainer {
 
   private void operatorButtonBindings() {
     // operator.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
-    // operator.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
-    // operator.y().onTrue(new goToHangar(arm, wrist));
-    // operator.b().onTrue(new shoot(arm, wrist));
-    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
 
-    driver.leftBumper().onTrue(shooter.runAtVoltage(5)).onFalse(shooter.runAtVoltage(0));
+    // operator
+    // .leftBumper()
+    // .onTrue(shooter.runAtVoltage(Constants.ShooterV))
+    // .onFalse(shooter.runAtVoltage(0));
+    // operator.povUp().onTrue(new goToHangar(arm, wrist));
+    // operator.povLeft().onTrue(new shoot(arm, wrist));
+    // operator.povDown().onTrue(new idle(arm, wrist));
+    // operator.povRight().onTrue(new start(arm, wrist));
+
+    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    driver
+        .leftBumper()
+        .onTrue(shooter.runAtVoltage(Constants.ShooterV))
+        .onFalse(shooter.runAtVoltage(0));
     driver.povUp().onTrue(new goToHangar(arm, wrist));
     driver.povLeft().onTrue(new shoot(arm, wrist));
-
-    driver.povRight().onTrue(new shoot2(arm, wrist));
     driver.povDown().onTrue(new idle(arm, wrist));
-    driver.y().onTrue(shooter.runAtVoltage(-5)).onFalse(shooter.runAtVoltage(0));
+    driver.povRight().onTrue(new start(arm, wrist));
   }
 
   private void driveButtonBindings() {
@@ -206,6 +210,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

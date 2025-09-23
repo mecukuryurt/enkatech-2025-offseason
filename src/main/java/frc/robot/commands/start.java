@@ -5,12 +5,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.wrist.Wrist;
 
-public class shoot extends SequentialCommandGroup {
-
-  public shoot(Arm arm, Wrist wrist) {
-
+public class start extends SequentialCommandGroup {
+  public start(Arm arm, Wrist wrist) {
     addCommands(
-        arm.goToPosition(Constants.ShootArmPosition),
-        wrist.goToPosition(Constants.ShootWristPosition));
+        arm.goToPosition(Constants.StartArmPosition),
+        wrist.goToPosition(Constants.StartWristPosition));
   }
 }
