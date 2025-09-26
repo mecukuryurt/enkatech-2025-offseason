@@ -14,9 +14,20 @@ import frc.robot.subsystems.drive.Drive;
 public class approachToReef extends SequentialCommandGroup {
   /** Creates a new approachToReef. */
   public approachToReef(Drive drive) {
-    var results = LimelightHelpers.getLatestResults("limelight");
-    if (true) {
-      // do some really interesting stuff
+    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+    for (RawFiducial fiducial : fiducials) {
+      int id = fiducial.id;
+      double txnc = fiducial.txnc;
+      double tync = fiducial.tync;
+      double ta = fiducial.ta;
+      double distToCamera = fiducial.distToCamera;
+      double distToRobot = fiducial.distToRobot;
+      double ambiguity = fiducial.ambiguity;
+
+      if (id == 11) {
+        System.out.println("guys look i found a cat");
+        System.out.println(txnc, tync, distToRobot);
+      }
     }
 
     addCommands();
