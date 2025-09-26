@@ -21,8 +21,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.idle;
@@ -240,5 +242,24 @@ public class RobotContainer {
     }
 
     Logger.recordOutput("odometry", drive.getPose());
+  }
+
+  public void apriltagPositionCalculate() {
+    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+    for (RawFiducial fiducial : fiducials) {
+      int id = fiducial.id;
+      double txnc = fiducial.txnc;
+      double tync = fiducial.tync;
+      double ta = fiducial.ta;
+      double distToCamera = fiducial.distToCamera;
+      double distToRobot = fiducial.distToRobot;
+      double ambiguity = fiducial.ambiguity;
+
+      if (id == 11) {
+        new PrintCommand("guys look i found a cat").execute();
+        Logger.recordOutput("patatesx", txnc);
+        Logger.recordOutput("patatesy", tync);
+      }
+    }
   }
 }
