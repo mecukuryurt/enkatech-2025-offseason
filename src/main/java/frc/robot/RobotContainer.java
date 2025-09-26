@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.idle;
+import frc.robot.commands.l1;
 import frc.robot.commands.shoot;
 import frc.robot.commands.start;
 import frc.robot.generated.TunerConstants;
@@ -172,11 +173,19 @@ public class RobotContainer {
     // operator.povDown().onTrue(new idle(arm, wrist));
     // operator.povRight().onTrue(new start(arm, wrist));
 
-    driver.rightBumper().onTrue(gripper.runAtVoltage(4)).onFalse(gripper.runAtVoltage(0));
+    driver
+        .rightBumper()
+        .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
+        .onFalse(gripper.runAtVoltage(0));
     driver
         .leftBumper()
         .onTrue(shooter.runAtVoltage(Constants.ShooterV))
         .onFalse(shooter.runAtVoltage(0));
+    driver.x().onTrue(new l1(arm, wrist));
+    driver
+        .y()
+        .onTrue(gripper.runAtVoltage(Constants.GripperBallV))
+        .onFalse(gripper.runAtVoltage(0));
     driver.povUp().onTrue(new goToHangar(arm, wrist));
     driver.povLeft().onTrue(new shoot(arm, wrist));
     driver.povDown().onTrue(new idle(arm, wrist));
@@ -197,7 +206,7 @@ public class RobotContainer {
                 drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     driver
