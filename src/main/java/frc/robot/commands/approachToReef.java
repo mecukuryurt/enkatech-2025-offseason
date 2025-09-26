@@ -25,8 +25,7 @@ public class approachToReef extends SequentialCommandGroup {
       double distToRobot = fiducial.distToRobot;
       double ambiguity = fiducial.ambiguity;
 
-      if (id == 11) {
-      }
+      if (id == 11) {}
     }
 
     addCommands();
