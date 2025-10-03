@@ -34,6 +34,7 @@ public class approachToReef extends SequentialCommandGroup {
         Logger.recordOutput("patatesid", id);
         Logger.recordOutput("patatesdist", distToCamera);
       }
+      break;
     }
 
     addCommands();
