@@ -4,6 +4,9 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
@@ -25,7 +28,12 @@ public class approachToReef extends SequentialCommandGroup {
       double distToRobot = fiducial.distToRobot;
       double ambiguity = fiducial.ambiguity;
 
-      if (id == 11) {}
+      if (true) {
+        new PrintCommand("guys look i found a cat").execute();
+        Logger.recordOutput("patatesx", txnc);
+        Logger.recordOutput("patatesid", id);
+        Logger.recordOutput("patatesdist", distToCamera);
+      }
     }
 
     addCommands();

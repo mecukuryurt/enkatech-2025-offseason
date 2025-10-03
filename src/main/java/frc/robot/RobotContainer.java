@@ -264,10 +264,11 @@ public class RobotContainer {
       double distToRobot = fiducial.distToRobot;
       double ambiguity = fiducial.ambiguity;
 
-      if (id == 11) {
+      if (true) {
         new PrintCommand("guys look i found a cat").execute();
         Logger.recordOutput("patatesx", txnc);
-        Logger.recordOutput("patatesy", tync);
+        Logger.recordOutput("patatesid", id);
+        Logger.recordOutput("patatesdist", distToCamera);
       }
     }
   }
