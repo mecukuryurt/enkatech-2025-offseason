@@ -14,18 +14,16 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.approachToReef;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.idle;
 import frc.robot.commands.l1;
@@ -220,6 +218,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    operator.b().whileTrue(new approachToReef(drive));
   }
 
   /**
@@ -245,7 +245,8 @@ public class RobotContainer {
     // Add it to your pose estimator
 
     if (LimelightHelpers.getFiducialID("limelight") != -1) {
-      drive.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+      // drive.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5,
+      // 9999999));
       drive.poseEstimator.addVisionMeasurement(
           limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
     }
@@ -253,23 +254,8 @@ public class RobotContainer {
     Logger.recordOutput("odometry", drive.getPose());
   }
 
-  public void apriltagPositionCalculate() {
-    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-    for (RawFiducial fiducial : fiducials) {
-      int id = fiducial.id;
-      double txnc = fiducial.txnc;
-      double tync = fiducial.tync;
-      double ta = fiducial.ta;
-      double distToCamera = fiducial.distToCamera;
-      double distToRobot = fiducial.distToRobot;
-      double ambiguity = fiducial.ambiguity;
-
-      if (true) {
-        new PrintCommand("guys look i found a cat").execute();
-        Logger.recordOutput("patatesx", txnc);
-        Logger.recordOutput("patatesid", id);
-        Logger.recordOutput("patatesdist", distToCamera);
-      }
-    }
+  public void logFiducial() {
+    approachToReef.logFiducial();
   }
+  ;
 }
