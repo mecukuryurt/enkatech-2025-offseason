@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -33,8 +35,9 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
-  }
+  };
 
+  public static final Pose2d initialPose = new Pose2d(3, 3, new Rotation2d(0));
   // Motor CANID Constants
   public static int GripperCANID = 35;
   public static int ShooterCANID = 31;

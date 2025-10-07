@@ -14,6 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -73,7 +75,8 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Arm arm;
   private final Wrist wrist;
-  public boolean isWristInLeft = false;
+  private SlewRateLimiter xLimiter = new SlewRateLimiter(4);
+  private SlewRateLimiter yLimiter = new SlewRateLimiter(4);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -147,6 +150,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
+    drive.setPose(Constants.initialPose);
     configureButtonBindings();
   }
 
@@ -196,7 +200,10 @@ public class RobotContainer {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+            drive,
+            () -> -yLimiter.calculate(driver.getLeftY()),
+            () -> -xLimiter.calculate(driver.getLeftX()),
+            () -> -driver.getRightX() * 0.6));
 
     // Lock to 0° when A button is held
     driver
@@ -236,19 +243,17 @@ public class RobotContainer {
     LimelightHelpers.setPipelineIndex("limelight", 0);
     LimelightHelpers.SetRobotOrientation(
         "limelight", drive.getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    ;
+    Logger.recordOutput("ll-val", LimelightHelpers.getTX("limelight"));
 
     // Get the pose estimate
-    LimelightHelpers.PoseEstimate limelightMeasurement =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    LimelightHelpers.PoseEstimate mt2 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
     // Add it to your pose estimator
 
-    if (LimelightHelpers.getFiducialID("limelight") != -1) {
-      // drive.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5,
-      // 9999999));
-      drive.poseEstimator.addVisionMeasurement(
-          limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
+    if (mt2 != null && mt2.tagCount != 0) {
+      Logger.recordOutput("odometry-ll", mt2.pose);
+      drive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds, VecBuilder.fill(.7, .7, 999999));
     }
 
     Logger.recordOutput("odometry", drive.getPose());
@@ -257,5 +262,9 @@ public class RobotContainer {
   public void logFiducial() {
     approachToReef.logFiducial();
   }
-  ;
+
+  // public double dist(){
+
+  // }
+  // ;
 }

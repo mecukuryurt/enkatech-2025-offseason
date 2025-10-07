@@ -5,18 +5,54 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.subsystems.drive.Drive;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.littletonrobotics.junction.Logger;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class approachToReef extends SequentialCommandGroup {
+
+  public static class Reef {
+    Pose2d pose;
+    int blueID;
+    int redID;
+
+    Reef(Pose2d pose, int blueID, int redID) {
+      this.blueID = blueID;
+      this.pose = pose;
+      this.redID = redID;
+    }
+
+    int getID() {
+      return DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue
+          ? this.blueID
+          : this.redID;
+    }
+  }
+
+  public static List<Reef> reefs = Arrays.asList(
+      new Reef(new Pose2d(3.78, 2.83, new Rotation2d(Units.degreesToRadians(-120))), 17, 8),
+      new Reef(new Pose2d(3.14, 4.02, new Rotation2d(Units.degreesToRadians(180))), 18, 7),
+      new Reef(new Pose2d(3.81, 5.21, new Rotation2d(Units.degreesToRadians(120))), 19, 6), // 120
+      new Reef(new Pose2d(5.21, 5.21, new Rotation2d(Units.degreesToRadians(60))), 20, 11),
+      new Reef(new Pose2d(5.88, 4.02, new Rotation2d(Units.degreesToRadians(0))), 21, 10),
+      new Reef(new Pose2d(5.16, 2.82, new Rotation2d(Units.degreesToRadians(-60))), 22, 9));
+
   public static void logFiducial() {
     RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
     for (RawFiducial fiducial : fiducials) {
@@ -27,7 +63,12 @@ public class approachToReef extends SequentialCommandGroup {
       double distToCamera = fiducial.distToCamera;
       double distToRobot = fiducial.distToRobot;
       double ambiguity = fiducial.ambiguity;
-
+      Pose3d target2robot = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+      Logger.recordOutput(
+          "uzaklik",
+          Math.sqrt(
+              target2robot.getY() * target2robot.getY()
+                  + target2robot.getZ() * target2robot.getZ()));
       if (true) {
         new PrintCommand("guys look i found a cat").execute();
         Logger.recordOutput("patatesx", txnc);
@@ -41,7 +82,22 @@ public class approachToReef extends SequentialCommandGroup {
 
   /** Creates a new approachToReef. */
   public approachToReef(Drive drive) {
-    Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+
+    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+    double distToCamera = 0, distToRobot;
+    for (RawFiducial fiducial : fiducials) {
+      int id = fiducial.id;
+      double txnc = fiducial.txnc;
+      double tync = fiducial.tync;
+      double ta = fiducial.ta;
+      distToCamera = fiducial.distToCamera;
+      distToRobot = fiducial.distToRobot;
+      double ambiguity = fiducial.ambiguity;
+      break;
+    }
+    Pose2d pose = drive.getPose();
+    // Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+    Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
 
     Logger.recordOutput("begonya", pose);
 
@@ -51,7 +107,7 @@ public class approachToReef extends SequentialCommandGroup {
 
     double forwardMovement = 0; // pose.getY();
     double sideMovement = 0; // pose.getX();
-    double rotationMovement = pidR.calculate(pose.getRotation().getAngle());
+    double rotationMovement = pidR.calculate(pose.getRotation().getRotations());
 
     Logger.recordOutput("papatya", rotationMovement);
 
