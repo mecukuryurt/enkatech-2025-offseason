@@ -150,7 +150,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    drive.setPose(Constants.initialPose);
+    // drive.setPose(Constants.initialPose);
     configureButtonBindings();
   }
 
