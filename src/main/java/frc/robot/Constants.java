@@ -51,7 +51,7 @@ public final class Constants {
   public static double GripperBallV = -4;
 
   // Motor Positions
-  public static double ArmOffset = 0.002;
+  public static double ArmOffset = 0;
   public static double WristOffset = 0;
 
   public static double StartArmPosition = -0.005 + ArmOffset;
