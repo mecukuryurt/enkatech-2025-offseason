@@ -27,8 +27,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.approachToReef;
 import frc.robot.commands.goToHangar;
-import frc.robot.commands.idle;
 import frc.robot.commands.l1;
+import frc.robot.commands.leftShoot;
 import frc.robot.commands.shoot;
 import frc.robot.commands.start;
 import frc.robot.generated.TunerConstants;
@@ -181,19 +181,24 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
         .onFalse(gripper.runAtVoltage(0));
-    driver
-        .leftBumper()
+    operator
+        .rightBumper()
         .onTrue(shooter.runAtVoltage(Constants.ShooterV))
         .onFalse(shooter.runAtVoltage(0));
-    driver.x().onTrue(new l1(arm, wrist));
-    driver
+    operator
+        .leftBumper()
+        .onTrue(shooter.runAtVoltage(-Constants.ShooterV))
+        .onFalse(shooter.runAtVoltage(0));
+
+    operator.x().onTrue(new l1(arm, wrist));
+    operator
         .y()
         .onTrue(gripper.runAtVoltage(Constants.GripperBallV))
         .onFalse(gripper.runAtVoltage(0));
-    driver.povUp().onTrue(new goToHangar(arm, wrist));
-    driver.povLeft().onTrue(new shoot(arm, wrist));
-    driver.povDown().onTrue(new idle(arm, wrist));
-    driver.povRight().onTrue(new start(arm, wrist));
+    operator.povUp().onTrue(new goToHangar(arm, wrist));
+    operator.povLeft().onTrue(new leftShoot(arm, wrist));
+    operator.povDown().onTrue(new start(arm, wrist));
+    operator.povRight().onTrue(new shoot(arm, wrist));
   }
 
   private void driveButtonBindings() {
@@ -217,7 +222,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     driver
-        .b()
+        .x()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -226,7 +231,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    operator.b().whileTrue(new approachToReef(drive));
+    driver.b().whileTrue(new approachToReef(drive));
   }
 
   /**
