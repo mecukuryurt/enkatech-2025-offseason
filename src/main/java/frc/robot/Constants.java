@@ -54,11 +54,11 @@ public final class Constants {
   public static double ArmOffset = 0;
   public static double WristOffset = 0;
 
-  public static double StartArmPosition = -0.005 + ArmOffset;
+  public static double StartArmPosition = -0.005;
   public static double StartWristPosition = 0 + WristOffset;
 
-  public static double ShootArmPosition = -0.316 + ArmOffset;
-  public static double ShootWristPosition = -11.2 + WristOffset;
+  public static double ShootArmPosition = -0.306 + ArmOffset;
+  public static double ShootWristPosition = -12.4 + WristOffset;
 
   public static double LeftShootWristPosition = -35.6 + WristOffset;
 
