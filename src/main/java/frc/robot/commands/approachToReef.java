@@ -45,14 +45,15 @@ public class approachToReef extends SequentialCommandGroup {
     }
   }
 
-  public static List<Reef> reefs = Arrays.asList(
-      new Reef(new Pose2d(3.78, 2.83, new Rotation2d(Units.degreesToRadians(-120))), 17, 8),
-      new Reef(new Pose2d(3.14, 4.02, new Rotation2d(Units.degreesToRadians(180))), 18, 7),
-      new Reef(
-          new Pose2d(3.81, 5.21, new Rotation2d(Units.degreesToRadians(120))), 19, 6), // 120
-      new Reef(new Pose2d(5.21, 5.21, new Rotation2d(Units.degreesToRadians(60))), 20, 11),
-      new Reef(new Pose2d(5.88, 4.02, new Rotation2d(Units.degreesToRadians(0))), 21, 10),
-      new Reef(new Pose2d(5.16, 2.82, new Rotation2d(Units.degreesToRadians(-60))), 22, 9));
+  public static List<Reef> reefs =
+      Arrays.asList(
+          new Reef(new Pose2d(3.78, 2.83, new Rotation2d(Units.degreesToRadians(-120))), 17, 8),
+          new Reef(new Pose2d(3.14, 4.02, new Rotation2d(Units.degreesToRadians(180))), 18, 7),
+          new Reef(
+              new Pose2d(3.81, 5.21, new Rotation2d(Units.degreesToRadians(120))), 19, 6), // 120
+          new Reef(new Pose2d(5.21, 5.21, new Rotation2d(Units.degreesToRadians(60))), 20, 11),
+          new Reef(new Pose2d(5.88, 4.02, new Rotation2d(Units.degreesToRadians(0))), 21, 10),
+          new Reef(new Pose2d(5.16, 2.82, new Rotation2d(Units.degreesToRadians(-60))), 22, 9));
 
   public static Rotation2d getReefRotation(double id) {
     // System.out.println(id);
@@ -66,10 +67,8 @@ public class approachToReef extends SequentialCommandGroup {
 
   public static double getModuloRotation(double rawYaw) {
     double modified = (Math.abs(rawYaw) % (360)) * Math.signum(rawYaw);
-    if (modified < -180)
-      modified += 360;
-    if (modified > 180)
-      modified -= 360;
+    if (modified < -180) modified += 360;
+    if (modified > 180) modified -= 360;
     return modified;
   }
 
@@ -100,16 +99,14 @@ public class approachToReef extends SequentialCommandGroup {
     }
   }
 
-  public static class commonPIDandLimelightValues {
-  }
+  public static class commonPIDandLimelightValues {}
 
   /** Creates a new approachToReef. */
   public approachToReef(Drive drive) {
 
     addCommands(
         new FunctionalCommand(
-            () -> {
-            },
+            () -> {},
             () -> {
               RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
               double distToCamera = 0, distToRobot, txnc = 0;
@@ -124,11 +121,12 @@ public class approachToReef extends SequentialCommandGroup {
                 double ambiguity = fiducial.ambiguity;
                 break;
               }
-              Pose2d pose = drive.getPose();
+              // Pose2d pose = drive.getPose();
+              Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
               // Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
-              Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
+              // Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
 
-              Logger.recordOutput("begonya", pose);
+              // Logger.recordOutput("begonya", pose);
 
               PIDController pidX = new PIDController(0.04, 0, 0);
               PIDController pidY = new PIDController(2, 1, 0);
@@ -139,10 +137,10 @@ public class approachToReef extends SequentialCommandGroup {
 
               double forwardMovement = pidY.calculate(distToCamera); // pose.getY();
               double sideMovement = pidX.calculate(txnc); // pose.getX();
-              double rotationMovement = pidR.calculate(
-                  getModuloRotation(
-                      getReefRotation(id).getDegrees()
-                          - drive.getPose().getRotation().getDegrees()));
+              double rotationMovement =
+                  pidR.calculate(
+                      getModuloRotation(
+                          getReefRotation(id).getDegrees() - pose.getRotation().getDegrees()));
 
               Logger.recordOutput("kasimpati", rotationMovement);
 
