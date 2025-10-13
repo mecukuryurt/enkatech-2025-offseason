@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Wrist extends SubsystemBase {
   WristIO io;
+  int shooterStatus = 0;
 
   public Wrist(WristIO io) {
     this.io = io;
@@ -14,6 +15,13 @@ public class Wrist extends SubsystemBase {
   public Wrist() {}
 
   public Command goToPosition(double pos) {
+    return new InstantCommand(
+        () -> {
+          io.goToPosition(pos);
+        });
+  }
+
+  public Command goToPosition(double pos, int shooterStatus) {
     return new InstantCommand(
         () -> {
           io.goToPosition(pos);
