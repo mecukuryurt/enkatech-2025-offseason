@@ -127,8 +127,8 @@ public class approachToReef extends SequentialCommandGroup {
 
               Logger.recordOutput("begonya", pose);
 
-              PIDController pidX = new PIDController(0.08, 0, 0);
-              PIDController pidY = new PIDController(1, 1, 0);
+              PIDController pidX = new PIDController(0.04, 0, 0);
+              PIDController pidY = new PIDController(1.7, 1, 0);
               PIDController pidR = new PIDController(0.1, 0, 0);
 
               pidR.setSetpoint(0);
