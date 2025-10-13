@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Test1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "start0toH"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "goToHangar"
+                }
+              }
+            ]
           }
         },
         {
@@ -17,9 +30,27 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopAllActions"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1Position"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "TEst2"
+            "pathName": "hangar127"
           }
         }
       ]
