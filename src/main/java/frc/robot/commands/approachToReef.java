@@ -130,7 +130,7 @@ public class approachToReef extends SequentialCommandGroup {
 
               PIDController pidX = new PIDController(0.04, 0, 0);
               PIDController pidY = new PIDController(2, 1, 0);
-              PIDController pidR = new PIDController(0.03, 0, 0);
+              PIDController pidR = new PIDController(0.06, 0, 0);
 
               pidR.setSetpoint(0);
               pidY.setSetpoint(0.55);
@@ -165,7 +165,7 @@ public class approachToReef extends SequentialCommandGroup {
                 double ambiguity = fiducial.ambiguity;
                 break;
               }
-              return distToCamera < 0.3;
+              return distToCamera < 0.65;
             },
             drive));
   }

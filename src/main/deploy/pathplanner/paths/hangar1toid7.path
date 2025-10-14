@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1257401315789473,
-        "y": 7.06546052631579
+        "x": 1.0668236301369864,
+        "y": 6.98505993150685
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1257401315789473,
-        "y": 7.06546052631579
+        "x": 1.145860411767987,
+        "y": 6.289536253154047
       },
       "isLocked": false,
       "linkedName": "hangar1"
     },
     {
       "anchor": {
-        "x": 2.704623287671233,
-        "y": 3.9799229452054794
+        "x": 2.5016447368421053,
+        "y": 4.438733552631579
       },
       "prevControl": {
-        "x": 1.7046232876712328,
-        "y": 3.9799229452054794
+        "x": 1.931163395447367,
+        "y": 4.844382463785621
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "id7"
     }
   ],
   "rotationTargets": [],
@@ -33,16 +33,16 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.2,
+    "rotation": -11.10167147841357
   },
   "reversed": false,
   "folder": null,
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": -53.972626614896335
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

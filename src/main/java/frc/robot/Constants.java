@@ -48,7 +48,7 @@ public final class Constants {
   // Voltage
   public static double ShooterV = -2;
   public static double GripperInTakeV = 4;
-  public static double GripperBallV = -4;
+  public static double GripperBallV = -6;
 
   // Motor Positions
   public static double ArmOffset = 0;
@@ -67,6 +67,6 @@ public final class Constants {
 
   public static double HangarArmPos = -0.064 + ArmOffset;
   public static double HangarWristPos = -22.4 + WristOffset;
-  public static double L1ArmPos = -0.362 + ArmOffset;
+  public static double L1ArmPos = -0.34 + ArmOffset;
   public static double L1WristPos = -21.92 + WristOffset;
 }

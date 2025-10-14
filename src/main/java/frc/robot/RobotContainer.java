@@ -13,18 +13,18 @@
 
 package frc.robot;
 
-// import com.google.flatbuffers.Constants;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -299,9 +299,22 @@ public class RobotContainer {
     NamedCommands.registerCommand("goToShootRight", new shoot(arm, wrist));
     NamedCommands.registerCommand("goToShootLeft", new leftShoot(arm, wrist));
     NamedCommands.registerCommand("robotStartState", new start(arm, wrist));
+    NamedCommands.registerCommand("approachToReef", new approachToReef(drive));
+    NamedCommands.registerCommand(
+        "stopApproachToReef",
+        new InstantCommand(
+            () -> {
+              drive.runVelocity(new ChassisSpeeds());
+            }));
     NamedCommands.registerCommand(
         "stopAllActions",
-        new SequentialCommandGroup(gripper.runAtVoltage(0), shooter.runAtVoltage(0)));
+        new SequentialCommandGroup(
+            gripper.runAtVoltage(0),
+            shooter.runAtVoltage(0),
+            new InstantCommand(
+                () -> {
+                  drive.runVelocity(new ChassisSpeeds());
+                })));
   }
 
   // public double dist(){

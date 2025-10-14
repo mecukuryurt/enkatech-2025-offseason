@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "start0toid6"
+                  "pathName": "start0toid11"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L1Position"
+                  "name": "goToShootLeft"
                 }
               }
             ]
@@ -26,13 +26,19 @@
         {
           "type": "named",
           "data": {
-            "name": "L1ShootAndAlgaeCommand"
+            "name": "stopAllActions"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootLeft"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.5
+            "waitTime": 2.0
           }
         },
         {
@@ -48,7 +54,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "id6toHangar"
+                  "pathName": null
                 }
               },
               {
@@ -69,7 +75,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 2.0
           }
         },
         {
@@ -95,6 +101,24 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "approachToReef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopAllActions"
           }
         },
         {
