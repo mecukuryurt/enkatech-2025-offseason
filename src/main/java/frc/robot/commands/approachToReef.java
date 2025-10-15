@@ -142,7 +142,7 @@ public class approachToReef extends SequentialCommandGroup {
                       getModuloRotation(
                           getReefRotation(id).getDegrees() - pose.getRotation().getDegrees()));
 
-              Logger.recordOutput("kasimpati", rotationMovement);
+              Logger.recordOutput("kasimpati", sideMovement);
 
               drive.runVelocity(
                   new ChassisSpeeds(-forwardMovement, sideMovement, -rotationMovement));
@@ -165,7 +165,7 @@ public class approachToReef extends SequentialCommandGroup {
                 double ambiguity = fiducial.ambiguity;
                 break;
               }
-              return distToCamera < 0.65;
+              return (distToCamera < 0.65);
             },
             drive));
   }

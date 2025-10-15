@@ -19,19 +19,19 @@ import frc.robot.subsystems.wrist.Wrist;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class autoShoot extends SequentialCommandGroup {
+public class autoShootL3 extends SequentialCommandGroup {
   /** Creates a new NewScoreL4. */
-  public autoShoot(Drive drive, Arm arm, Wrist wrist, Shooter shooter, boolean isRight) {
+  public autoShootL3(Drive drive, Arm arm, Wrist wrist, Shooter shooter, boolean isRight) {
 
     addCommands(
         new SequentialCommandGroup(
             new ParallelCommandGroup(
-                isRight ? new shoot(arm, wrist) : new leftShoot(arm, wrist),
+                isRight ? new shootL3(arm, wrist) : new leftShootL3(arm, wrist),
                 new approachToReef(drive)),
             new WaitCommand(0.5),
             new ConditionalCommand(
                 new SequentialCommandGroup(
-                    shooter.runAtVoltage(isRight ? Constants.ShooterV : -Constants.ShooterV),
+                    shooter.runAtVoltage(isRight ? Constants.ShooterL3V : -Constants.ShooterL3V),
                     new WaitCommand(0.6),
                     shooter.runAtVoltage(0)),
                 new InstantCommand(() -> {}),

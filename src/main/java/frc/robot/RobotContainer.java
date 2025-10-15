@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.approachToReef;
 import frc.robot.commands.autoShoot;
+import frc.robot.commands.autoShootL3;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.l1;
 import frc.robot.commands.leftShoot;
@@ -184,10 +185,6 @@ public class RobotContainer {
     // operator.povDown().onTrue(new idle(arm, wrist));
     // operator.povRight().onTrue(new start(arm, wrist));
 
-    driver
-        .rightBumper()
-        .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
-        .onFalse(gripper.runAtVoltage(0));
     operator
         .rightBumper()
         .onTrue(shooter.runAtVoltage(Constants.ShooterV))
@@ -239,7 +236,14 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     driver.b().whileTrue(new approachToReef(drive));
-    driver.y().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
+    driver
+        .y()
+        .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
+        .onFalse(gripper.runAtVoltage(0));
+    driver.leftBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
+    driver.rightBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, true));
+    driver.povLeft().onTrue(new autoShootL3(drive, arm, wrist, shooter, false));
+    driver.povRight().onTrue(new autoShootL3(drive, arm, wrist, shooter, true));
   }
 
   /**
