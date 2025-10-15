@@ -16,7 +16,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.approachToReef;
+import frc.robot.commands.autoShoot;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.l1;
 import frc.robot.commands.leftShoot;
@@ -54,6 +54,7 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -79,8 +80,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Arm arm;
   private final Wrist wrist;
-  private SlewRateLimiter xLimiter = new SlewRateLimiter(4);
-  private SlewRateLimiter yLimiter = new SlewRateLimiter(4);
+  SwerveDriveSimulation sim;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -103,6 +103,7 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        // this.sim = new SwerveDriveSimulation(Drive.config, Constants.initialPose);
         drive =
             new Drive(
                 new GyroIO() {},
@@ -156,7 +157,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    // drive.setPose(Constants.initialPose);
+    drive.setPose(Constants.startPose);
     configureButtonBindings();
   }
 
@@ -238,6 +239,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     driver.b().whileTrue(new approachToReef(drive));
+    driver.y().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
   }
 
   /**

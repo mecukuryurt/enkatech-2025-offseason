@@ -45,28 +45,29 @@ public final class Constants {
   public static int WristCANID = 8;
   public static int PigeonCANID = 1;
 
+  public static Pose2d startPose = new Pose2d(10, 1.220, new Rotation2d(0));
   // Voltage
-  public static double ShooterV = -2;
+  public static double ShooterV = -3;
   public static double GripperInTakeV = 4;
   public static double GripperBallV = -6;
 
   // Motor Positions
-  public static double ArmOffset = 0;
+  public static double ArmOffset = -0.048;
   public static double WristOffset = 0;
 
   public static double StartArmPosition = -0.005;
-  public static double StartWristPosition = 0 + WristOffset;
+  public static double StartWristPosition = 0;
 
   public static double ShootArmPosition = -0.306 + ArmOffset;
-  public static double ShootWristPosition = -12.4 + WristOffset;
+  public static double ShootWristPosition = -13 + WristOffset;
 
-  public static double LeftShootWristPosition = -35.6 + WristOffset;
+  public static double LeftShootWristPosition = -36.6 + WristOffset;
 
   public static double IdleArmPos = -0.145 + ArmOffset;
   public static double IdleWristPos = -22.4 + WristOffset;
 
   public static double HangarArmPos = -0.064 + ArmOffset;
-  public static double HangarWristPos = -22.4 + WristOffset;
+  public static double HangarWristPos = -24.5 + WristOffset;
   public static double L1ArmPos = -0.34 + ArmOffset;
   public static double L1WristPos = -21.92 + WristOffset;
 }

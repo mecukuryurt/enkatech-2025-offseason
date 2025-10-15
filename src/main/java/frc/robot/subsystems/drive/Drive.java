@@ -332,6 +332,23 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
+  // public static final DriveTrainSimulationConfig config =
+  // DriveTrainSimulationConfig.Default()
+  // .withBumperSize(Millimeters.of(885), Millimeters.of(885))
+  // .withTrackLengthTrackWidth(Millimeters.of(577.85), Millimeters.of(577.85))
+  // .withGyro(COTS.ofPigeon2())
+  // .withSwerveModule(
+  // new SwerveModuleSimulationConfig(
+  // DCMotor.getKrakenX60Foc(1),
+  // DCMotor.getFalcon500Foc(1),
+  // 8.14,
+  // 150 / 7.0,
+  // TunerConstants.kDriveFrictionVoltage,
+  // TunerConstants.kSteerFrictionVoltage,
+  // TunerConstants.kWheelRadius,
+  // KilogramSquareMeters.of(0.03),
+  // 1.2));
+
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);

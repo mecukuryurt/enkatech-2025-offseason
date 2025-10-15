@@ -12,12 +12,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.shooter.Shooter;
 import java.util.Arrays;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -25,7 +28,7 @@ import org.littletonrobotics.junction.Logger;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class approachToReef extends SequentialCommandGroup {
+public class autoShootLeft extends SequentialCommandGroup {
 
   public static class Reef {
     Pose2d pose;
@@ -102,7 +105,7 @@ public class approachToReef extends SequentialCommandGroup {
   public static class commonPIDandLimelightValues {}
 
   /** Creates a new approachToReef. */
-  public approachToReef(Drive drive) {
+  public autoShootLeft(Drive drive, Shooter shooter) {
 
     addCommands(
         new FunctionalCommand(
@@ -151,6 +154,10 @@ public class approachToReef extends SequentialCommandGroup {
             },
             (Boolean end) -> {
               drive.runVelocity(new ChassisSpeeds());
+              Commands.run(() -> shooter.runAtVoltage(-Constants.ShooterV), shooter);
+              // Commands.runOnce(() -> );
+              // new WaitCommand(0.6);
+              // Commands.runOnce(() -> shooter.runAtVoltage(0));
             },
             () -> {
               RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
