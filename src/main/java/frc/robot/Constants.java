@@ -18,10 +18,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always
- * "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
- * sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -54,7 +52,7 @@ public final class Constants {
   public static double GripperBallV = -6;
 
   // Motor Positions
-  public static double ArmOffset = 0.04;
+  public static double ArmOffset = 0.05;
   public static double WristOffset = 0;
 
   public static double StartArmPosition = -0.006;
