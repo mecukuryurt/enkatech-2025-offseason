@@ -10,6 +10,6 @@ public class leftShootL3 extends SequentialCommandGroup {
   public leftShootL3(Arm arm, Wrist wrist) {
     addCommands(
         arm.goToPosition(Constants.ShootL3ArmPos),
-        wrist.goToPosition(Constants.LeftShootWristPosition));
+        wrist.goToPosition(Constants.LeftShootL3WristPos));
   }
 }

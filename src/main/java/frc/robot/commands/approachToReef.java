@@ -153,11 +153,13 @@ public class approachToReef extends SequentialCommandGroup {
               drive.runVelocity(new ChassisSpeeds());
             },
             () -> {
+              Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
               RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-              double distToCamera = 0, distToRobot;
+              double distToCamera = 0, distToRobot, txnc = 0;
+              int id = -1;
               for (RawFiducial fiducial : fiducials) {
-                int id = fiducial.id;
-                double txnc = fiducial.txnc;
+                id = fiducial.id;
+                txnc = fiducial.txnc;
                 double tync = fiducial.tync;
                 double ta = fiducial.ta;
                 distToCamera = fiducial.distToCamera;
@@ -165,7 +167,11 @@ public class approachToReef extends SequentialCommandGroup {
                 double ambiguity = fiducial.ambiguity;
                 break;
               }
-              return (distToCamera < 0.65);
+              return ((distToCamera < 0.65)
+                  && (getModuloRotation(
+                          getReefRotation(id).getDegrees() - pose.getRotation().getDegrees())
+                      < 1)
+                  && txnc > 0.27);
             },
             drive));
   }

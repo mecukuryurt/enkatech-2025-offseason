@@ -224,7 +224,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     // driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when B button is pressedoperator
     driver
         .x()
         .onTrue(
@@ -240,6 +240,8 @@ public class RobotContainer {
         .y()
         .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
         .onFalse(gripper.runAtVoltage(0));
+    driver.povUp().onTrue(new goToHangar(arm, wrist));
+
     driver.leftBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
     driver.rightBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, true));
     driver.povLeft().onTrue(new autoShootL3(drive, arm, wrist, shooter, false));
