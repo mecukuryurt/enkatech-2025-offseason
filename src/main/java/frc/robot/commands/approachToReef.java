@@ -12,7 +12,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.LimelightHelpers;
@@ -105,74 +107,77 @@ public class approachToReef extends SequentialCommandGroup {
   public approachToReef(Drive drive) {
 
     addCommands(
-        new FunctionalCommand(
-            () -> {},
-            () -> {
-              RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-              double distToCamera = 0, distToRobot, txnc = 0;
-              double id = 0;
-              for (RawFiducial fiducial : fiducials) {
-                id = fiducial.id;
-                txnc = fiducial.txnc;
-                double tync = fiducial.tync;
-                double ta = fiducial.ta;
-                distToCamera = fiducial.distToCamera;
-                distToRobot = fiducial.distToRobot;
-                double ambiguity = fiducial.ambiguity;
-                break;
-              }
-              // Pose2d pose = drive.getPose();
-              Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
-              // Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
-              // Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
+        new ConditionalCommand(
+            new FunctionalCommand(
+                () -> {},
+                () -> {
+                  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+                  double distToCamera = 0, distToRobot, txnc = 0;
+                  double id = 0;
+                  for (RawFiducial fiducial : fiducials) {
+                    id = fiducial.id;
+                    txnc = fiducial.txnc;
+                    double tync = fiducial.tync;
+                    double ta = fiducial.ta;
+                    distToCamera = fiducial.distToCamera;
+                    distToRobot = fiducial.distToRobot;
+                    double ambiguity = fiducial.ambiguity;
+                    break;
+                  }
+                  // Pose2d pose = drive.getPose();
+                  Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
+                  // Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+                  // Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
 
-              // Logger.recordOutput("begonya", pose);
+                  // Logger.recordOutput("begonya", pose);
 
-              PIDController pidX = new PIDController(0.04, 0, 0);
-              PIDController pidY = new PIDController(2, 1, 0);
-              PIDController pidR = new PIDController(0.06, 0, 0);
+                  PIDController pidX = new PIDController(0.04, 0, 0);
+                  PIDController pidY = new PIDController(2, 1, 0);
+                  PIDController pidR = new PIDController(0.06, 0, 0);
 
-              pidR.setSetpoint(0);
-              pidY.setSetpoint(0.55);
-              pidX.setSetpoint(0.3);
-              double forwardMovement = pidY.calculate(distToCamera); // pose.getY();
-              double sideMovement = pidX.calculate(txnc); // pose.getX();
-              double rotationMovement =
-                  pidR.calculate(
-                      getModuloRotation(
-                          getReefRotation(id).getDegrees() - pose.getRotation().getDegrees()));
+                  pidR.setSetpoint(0);
+                  pidY.setSetpoint(0.55);
+                  pidX.setSetpoint(0.3);
+                  double forwardMovement = pidY.calculate(distToCamera); // pose.getY();
+                  double sideMovement = pidX.calculate(txnc); // pose.getX();
+                  double rotationMovement =
+                      pidR.calculate(
+                          getModuloRotation(
+                              getReefRotation(id).getDegrees() - pose.getRotation().getDegrees()));
 
-              Logger.recordOutput("kasimpati", sideMovement);
+                  Logger.recordOutput("kasimpati", sideMovement);
 
-              drive.runVelocity(
-                  new ChassisSpeeds(-forwardMovement, sideMovement, -rotationMovement));
+                  drive.runVelocity(
+                      new ChassisSpeeds(-forwardMovement, sideMovement, -rotationMovement));
 
-              Logger.recordOutput("papatya", pose.getRotation().getDegrees());
-            },
-            (Boolean end) -> {
-              drive.runVelocity(new ChassisSpeeds());
-            },
-            () -> {
-              Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
-              RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-              double distToCamera = 0, distToRobot, txnc = 0;
-              int id = -1;
-              for (RawFiducial fiducial : fiducials) {
-                id = fiducial.id;
-                txnc = fiducial.txnc;
-                double tync = fiducial.tync;
-                double ta = fiducial.ta;
-                distToCamera = fiducial.distToCamera;
-                distToRobot = fiducial.distToRobot;
-                double ambiguity = fiducial.ambiguity;
-                break;
-              }
-              return ((distToCamera < 0.65)
-                  && (getModuloRotation(
-                          getReefRotation(id).getDegrees() - pose.getRotation().getDegrees())
-                      < 1)
-                  && txnc > 0.27);
-            },
-            drive));
+                  Logger.recordOutput("papatya", pose.getRotation().getDegrees());
+                },
+                (Boolean end) -> {
+                  drive.runVelocity(new ChassisSpeeds());
+                },
+                () -> {
+                  Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
+                  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+                  double distToCamera = 0, distToRobot, txnc = 0;
+                  int id = -1;
+                  for (RawFiducial fiducial : fiducials) {
+                    id = fiducial.id;
+                    txnc = fiducial.txnc;
+                    double tync = fiducial.tync;
+                    double ta = fiducial.ta;
+                    distToCamera = fiducial.distToCamera;
+                    distToRobot = fiducial.distToRobot;
+                    double ambiguity = fiducial.ambiguity;
+                    break;
+                  }
+                  return ((distToCamera < 0.65)
+                      && (getModuloRotation(
+                              getReefRotation(id).getDegrees() - pose.getRotation().getDegrees())
+                          < 1)
+                      && txnc < 0.3);
+                },
+                drive),
+            new InstantCommand(() -> {}),
+            () -> LimelightHelpers.getFiducialID("limelight") != -1));
   }
 }

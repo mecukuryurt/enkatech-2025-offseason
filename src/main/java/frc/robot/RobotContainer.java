@@ -34,7 +34,9 @@ import frc.robot.commands.autoShootL3;
 import frc.robot.commands.goToHangar;
 import frc.robot.commands.l1;
 import frc.robot.commands.leftShoot;
+import frc.robot.commands.leftShootL3;
 import frc.robot.commands.shoot;
+import frc.robot.commands.shootL3;
 import frc.robot.commands.start;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
@@ -169,6 +171,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    Commands.runOnce(
+        () ->
+            new SequentialCommandGroup(
+                gripper.runAtVoltage(0),
+                shooter.runAtVoltage(0),
+                new InstantCommand(
+                    () -> {
+                      drive.runVelocity(new ChassisSpeeds());
+                    })),
+        gripper,
+        shooter,
+        drive);
+
     driveButtonBindings();
     operatorButtonBindings();
   }
@@ -196,13 +211,21 @@ public class RobotContainer {
 
     operator.x().onTrue(new l1(arm, wrist));
     operator
-        .y()
+        .a()
         .onTrue(gripper.runAtVoltage(Constants.GripperBallV))
         .onFalse(gripper.runAtVoltage(0));
+    operator.y().onTrue(new leftShootL3(arm, wrist));
+    operator.b().onTrue(new shootL3(arm, wrist));
+
     operator.povUp().onTrue(new goToHangar(arm, wrist));
     operator.povLeft().onTrue(new leftShoot(arm, wrist));
     operator.povDown().onTrue(new start(arm, wrist));
     operator.povRight().onTrue(new shoot(arm, wrist));
+
+    operator
+        .start()
+        .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
+        .onFalse(gripper.runAtVoltage(0));
   }
 
   private void driveButtonBindings() {
@@ -212,21 +235,14 @@ public class RobotContainer {
             drive,
             () -> -driver.getLeftY(),
             () -> -driver.getLeftX(),
-            () -> -driver.getRightX() * 0.8));
-
-    // Lock to 0° when A button is held
-    driver
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> new Rotation2d()));
+            () -> -driver.getRightX() * 0.6));
 
     // Switch to X pattern when X button is pressed
     // driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressedoperator
     driver
-        .x()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -234,18 +250,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    driver.a().onTrue(new approachToReef(drive));
 
-    driver.b().whileTrue(new approachToReef(drive));
-    driver
-        .y()
-        .onTrue(gripper.runAtVoltage(Constants.GripperInTakeV))
-        .onFalse(gripper.runAtVoltage(0));
-    driver.povUp().onTrue(new goToHangar(arm, wrist));
+    driver.y().onTrue(new goToHangar(arm, wrist));
+    driver.povDown().onTrue(new start(arm, wrist));
 
-    driver.leftBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
-    driver.rightBumper().onTrue(new autoShoot(drive, arm, wrist, shooter, true));
-    driver.povLeft().onTrue(new autoShootL3(drive, arm, wrist, shooter, false));
-    driver.povRight().onTrue(new autoShootL3(drive, arm, wrist, shooter, true));
+    driver.x().onTrue(new autoShoot(drive, arm, wrist, shooter, false));
+    driver.b().onTrue(new autoShoot(drive, arm, wrist, shooter, true));
+    driver.leftBumper().onTrue(new autoShootL3(drive, arm, wrist, shooter, false));
+    driver.rightBumper().onTrue(new autoShootL3(drive, arm, wrist, shooter, true));
   }
 
   /**
