@@ -15,10 +15,17 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -57,14 +64,19 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
+import frc.robot.util.General;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -85,18 +97,19 @@ public class RobotContainer {
   private final Wrist wrist;
   SwerveDriveSimulation sim;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+        drive = new Drive(
+            new GyroIOPigeon2(),
+            new ModuleIOTalonFX(TunerConstants.FrontLeft),
+            new ModuleIOTalonFX(TunerConstants.FrontRight),
+            new ModuleIOTalonFX(TunerConstants.BackLeft),
+            new ModuleIOTalonFX(TunerConstants.BackRight));
 
         gripper = new Gripper(new GripperIOTalonFX(Constants.GripperCANID));
         shooter = new Shooter(new ShooterIOTalonFX(Constants.ShooterCANID));
@@ -106,30 +119,35 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        // this.sim = new SwerveDriveSimulation(Drive.config, Constants.initialPose);
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+        this.sim = new SwerveDriveSimulation(Drive.config, Constants.startPose);
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIOSim(TunerConstants.FrontLeft),
+            new ModuleIOSim(TunerConstants.FrontRight),
+            new ModuleIOSim(TunerConstants.BackLeft),
+            new ModuleIOSim(TunerConstants.BackRight));
 
         gripper = new Gripper(new GripperIOSim());
         shooter = new Shooter(new ShooterIOSim());
         arm = new Arm(new ArmIOSim());
         wrist = new Wrist(new WristIOSim());
+        SimulatedArena.getInstance().addDriveTrainSimulation(sim);
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = new Drive(
+            new GyroIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            },
+            new ModuleIO() {
+            });
 
         gripper = new Gripper();
         shooter = new Shooter();
@@ -160,26 +178,30 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
+    // if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) {
+    // drive.setPose(Constants.startBluePose);
+    // } else drive.setPose(Constants.startRedPose);
     drive.setPose(Constants.startPose);
     configureButtonBindings();
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     Commands.runOnce(
-        () ->
-            new SequentialCommandGroup(
-                gripper.runAtVoltage(0),
-                shooter.runAtVoltage(0),
-                new InstantCommand(
-                    () -> {
-                      drive.runVelocity(new ChassisSpeeds());
-                    })),
+        () -> new SequentialCommandGroup(
+            gripper.runAtVoltage(0),
+            shooter.runAtVoltage(0),
+            new InstantCommand(
+                () -> {
+                  drive.runVelocity(new ChassisSpeeds());
+                })),
         gripper,
         shooter,
         drive);
@@ -245,10 +267,9 @@ public class RobotContainer {
         .start()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
+                () -> drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                drive)
                 .ignoringDisable(true));
     driver.a().onTrue(new approachToReef(drive));
 
@@ -281,10 +302,18 @@ public class RobotContainer {
     // Get the pose estimate
     // LimelightHelpers.PoseEstimate mt2 =
     // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    LimelightHelpers.PoseEstimate mt2 =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    LimelightHelpers.PoseEstimate mt2;
+    LimelightHelpers.PoseEstimate mt1;
+    if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) {
+      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    } else {
+      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    }
 
-    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    // LimelightHelpers.PoseEstimate mt1 =
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
     // Add it to your pose estimator
 
@@ -298,7 +327,6 @@ public class RobotContainer {
     if (mt2 != null && mt2.tagCount != 0) {
       Logger.recordOutput("odometry-ll", mt2.pose);
       Logger.recordOutput("odometry-llmt1", mt1.pose);
-
       drive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds, VecBuilder.fill(.7, .7, 999999));
     }
 
@@ -337,4 +365,22 @@ public class RobotContainer {
                   drive.runVelocity(new ChassisSpeeds());
                 })));
   }
+
+  // public void displaySim() { // sadece simülasyon esnasında çalışmalı
+  // // advantage scope için robot konumunu publishleme
+  // Logger.recordOutput("FieldSimulation/RobotPosition",
+  // sim.getSimulatedDriveTrainPose());
+
+  // // coral konumlarını publishleme
+  // Pose3d[] corals =
+  // SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
+  // Logger.recordOutput("FieldSimulation/CoralPos", corals);
+
+  // Logger.recordOutput(
+  // "FieldSimulation/OdometryError",
+  // General.DistancePose2d(sim.getSimulatedDriveTrainPose(), drive.getPose()));
+
+  // // Logger.recordOutput("RelativePosition", new Pose2d(drive.getPose() +
+  // // relativePose);
+  // }
 }

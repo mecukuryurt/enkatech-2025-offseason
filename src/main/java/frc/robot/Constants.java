@@ -37,7 +37,6 @@ public final class Constants {
     REPLAY
   };
 
-  public static final Pose2d initialPose = new Pose2d(3, 3, new Rotation2d(0));
   // Motor CANID Constants
   public static int GripperCANID = 35;
   public static int ShooterCANID = 31;
@@ -45,7 +44,7 @@ public final class Constants {
   public static int WristCANID = 8;
   public static int PigeonCANID = 1;
 
-  public static Pose2d startPose = new Pose2d(10, 1.220, new Rotation2d(0));
+  public static final Pose2d startPose = new Pose2d(7.5, 6.5, new Rotation2d(Math.PI));
   // Voltage
   public static double ShooterV = -3;
   public static double GripperInTakeV = 4;
@@ -71,7 +70,7 @@ public final class Constants {
   public static double L1ArmPos = -0.401 + ArmOffset;
   public static double L1WristPos = -21.92 + WristOffset;
 
-  public static double ShooterL3V = -4.5;
+  public static double ShooterL3V = -5.5;
   public static double ShootL3ArmPos = -0.276 + ArmOffset;
   public static double ShootL3WristPos = -14.4 + WristOffset;
   public static double LeftShootL3WristPos = -34.238 + WristOffset;

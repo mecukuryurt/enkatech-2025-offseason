@@ -124,8 +124,11 @@ public class approachToReef extends SequentialCommandGroup {
                     double ambiguity = fiducial.ambiguity;
                     break;
                   }
+                  Pose2d pose;
                   // Pose2d pose = drive.getPose();
-                  Pose2d pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
+                  if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) {
+                    pose = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight").pose;
+                  } else pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight").pose;
                   // Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
                   // Logger.recordOutput("karanfil", LimelightHelpers.getTV("limelight"));
 
@@ -146,7 +149,11 @@ public class approachToReef extends SequentialCommandGroup {
                               getReefRotation(id).getDegrees() - pose.getRotation().getDegrees()));
 
                   Logger.recordOutput("kasimpati", sideMovement);
+                  // if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) {
 
+                  // drive.runVelocity(
+                  // new ChassisSpeeds(forwardMovement, -sideMovement, rotationMovement));
+                  // } else
                   drive.runVelocity(
                       new ChassisSpeeds(-forwardMovement, sideMovement, -rotationMovement));
 

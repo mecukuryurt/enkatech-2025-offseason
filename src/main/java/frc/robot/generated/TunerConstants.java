@@ -18,7 +18,8 @@ import edu.wpi.first.units.measure.*;
 public class TunerConstants {
   // Both sets of gains need to be tuned to your individual robot.
 
-  // The steer motor uses any SwerveModule.SteerRequestType control request with the
+  // The steer motor uses any SwerveModule.SteerRequestType control request with
+  // the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
@@ -56,14 +57,17 @@ public class TunerConstants {
   // This needs to be tuned to your individual robot
   private static final Current kSlipCurrent = Amps.of(120.0);
 
-  // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
-  // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
+  // Initial configs for the drive and steer motors and the azimuth encoder; these
+  // cannot be null.
+  // Some configs will be overwritten; check the `with*InitialConfigs()` API
+  // documentation.
   private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
           .withCurrentLimits(
               new CurrentLimitsConfigs()
-                  // Swerve azimuth does not require much torque output, so we can set a relatively
+                  // Swerve azimuth does not require much torque output, so we can set a
+                  // relatively
                   // low
                   // stator current limit to help avoid brownouts without impacting performance.
                   .withStatorCurrentLimit(Amps.of(60))
@@ -86,7 +90,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 8.142857142857142;
   private static final double kSteerGearRatio = 21.428571428571427;
-  private static final Distance kWheelRadius = Inches.of(2);
+  public static final Distance kWheelRadius = Inches.of(2);
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;
@@ -97,8 +101,8 @@ public class TunerConstants {
   private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.004);
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
   // Simulated voltage necessary to overcome friction
-  private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
-  private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
+  public static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
+  public static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
   public static final SwerveDrivetrainConstants DrivetrainConstants =
       new SwerveDrivetrainConstants()
